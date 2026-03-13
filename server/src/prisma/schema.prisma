@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Company {
+  id        Int      @id @default(autoincrement())
+  name      String
+  website   String?
+  industry  String?
+  leads     Lead[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Lead {
+  id         Int       @id @default(autoincrement())
+  name       String
+  email      String?
+  phone      String?
+  stage      String    @default("new")
+  value      Float?
+  companyId  Int?
+  company    Company?  @relation(fields: [companyId], references: [id])
+  notes      Note[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Note {
+  id        Int      @id @default(autoincrement())
+  content   String
+  leadId    Int
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
